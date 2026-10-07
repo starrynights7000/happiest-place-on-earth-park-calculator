@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Family park cost comparison</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0F2B25;
+    --paper:#F2ECD8;
+    --paper-dim:#E7DFC5;
+    --teal:#123832;
+    --teal-2:#1B4B43;
+    --gold:#D3A34C;
+    --gold-dim:#B8863A;
+    --berry:#A3335F;
+    --line: rgba(15,43,37,0.14);
+    --line-light: rgba(242,236,216,0.22);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--teal);
+    color:var(--paper);
+    font-family:'Inter',sans-serif;
+    padding:32px 20px 64px;
+  }
+  .wrap{max-width:1180px;margin:0 auto;}
+
+  header.hero{
+    position:relative;
+    background:var(--paper);
+    color:var(--ink);
+    border-radius:18px;
+    padding:34px 34px 28px;
+    margin-bottom:22px;
+    overflow:hidden;
+    border:1px solid var(--line);
+  }
+  header.hero::before{
+    content:"";
+    position:absolute; top:0; bottom:0; left:0;
+    width:14px;
+    background-image: radial-gradient(circle, var(--teal) 3px, transparent 3.5px);
+    background-size: 14px 18px;
+    background-position: center;
+    opacity:0.5;
+  }
+  .eyebrow{
+    font-size:13px;
+    letter-spacing:0.02em;
+    color:var(--gold-dim);
+    font-weight:600;
+    margin:0 0 6px 20px;
+  }
+  h1{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:clamp(28px,4vw,42px);
+    line-height:1.08;
+    margin:0 0 14px 20px;
+    max-width:640px;
+  }
+  .hero-meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px 28px;
+    margin:0 0 4px 20px;
+    font-size:14px;
+    color:var(--ink);
+    opacity:0.82;
+  }
+  .hero-meta b{font-weight:600;}
+
+  .panel{
+    background:var(--teal-2);
+    border:1px solid var(--line-light);
+    border-radius:16px;
+    padding:22px 26px;
+    margin-bottom:22px;
+  }
+  .panel h2{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:18px;
+    margin:0 0 4px;
+  }
+  .panel p.sub{
+    margin:0 0 18px;
+    font-size:13px;
+    color:rgba(242,236,216,0.6);
+    max-width:640px;
+  }
+  .assume-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+    gap:16px 20px;
+  }
+  .field label{
+    display:block;
+    font-size:12px;
+    color:rgba(242,236,216,0.62);
+    margin-bottom:6px;
+  }
+  .field .row{display:flex; align-items:center; gap:6px;}
+  input[type=number]{
+    width:100%;
+    background:var(--teal);
+    border:1px solid var(--line-light);
+    color:var(--paper);
+    border-radius:8px;
+    padding:8px 10px;
+    font-family:'Inter',sans-serif;
+    font-size:14px;
+    font-variant-numeric: tabular-nums;
+  }
+  input[type=number]:focus{outline:2px solid var(--gold); outline-offset:1px;}
+  .unit{font-size:12px;color:rgba(242,236,216,0.5); white-space:nowrap;}
+  .toggle-row{display:flex; gap:8px; margin-top:2px;}
+  .toggle-btn{
+    flex:1;
+    background:var(--teal);
+    border:1px solid var(--line-light);
+    color:var(--paper);
+    border-radius:8px;
+    padding:8px 10px;
+    font-size:13px;
+    font-family:'Inter',sans-serif;
+    cursor:pointer;
+  }
+  .toggle-btn.active{
+    background:var(--gold);
+    border-color:var(--gold);
+    color:var(--ink);
+    font-weight:600;
+  }
+
+  .cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+    gap:16px;
+    margin-bottom:24px;
+  }
+  .card{
+    background:var(--paper);
+    color:var(--ink);
+    border-radius:16px;
+    position:relative;
+    padding:20px 18px 18px;
+    display:flex;
+    flex-direction:column;
+    border:1px solid rgba(15,43,37,0.12);
+  }
+  .card.best{
+    border:2px solid var(--gold-dim);
+  }
+  .rank{
+    position:absolute;
+    top:14px; right:14px;
+    font-family:'Fraunces',serif;
+    font-size:12px;
+    background:var(--teal);
+    color:var(--paper);
+    border-radius:20px;
+    padding:3px 10px;
+    font-weight:500;
+  }
+  .card.best .rank{background:var(--gold-dim); color:var(--ink);}
+  .card-title{
+    font-family:'Fraunces',serif;
+    font-size:19px;
+    font-weight:500;
+    margin:0 0 2px;
+    padding-right:60px;
+  }
+  .card-sub{
+    font-size:12px;
+    color:rgba(15,43,37,0.55);
+    margin:0 0 14px;
+  }
+  .line-item{
+    font-size:12.5px;
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    gap:8px;
+    padding:5px 0;
+    border-top:1px dashed rgba(15,43,37,0.16);
+  }
+  .line-item:first-of-type{border-top:none;}
+  .line-item .lbl{color:rgba(15,43,37,0.68);}
+  .line-item .val{font-variant-numeric:tabular-nums; white-space:nowrap; font-weight:500;}
+  .subrow{
+    display:flex;
+    gap:6px;
+    align-items:center;
+    margin:4px 0 2px;
+  }
+  .subrow input{
+    width:74px;
+    background:transparent;
+    border:1px solid rgba(15,43,37,0.24);
+    color:var(--ink);
+    border-radius:6px;
+    padding:4px 6px;
+    font-size:12px;
+    font-family:'Inter',sans-serif;
+    font-variant-numeric: tabular-nums;
+  }
+  .subrow .tag{font-size:11.5px; color:rgba(15,43,37,0.6); flex:1;}
+  .tier-block{margin:10px 0 6px;}
+  .tier-block .tier-title{font-size:12px; font-weight:600; margin-bottom:5px; color:rgba(15,43,37,0.72);}
+  .total-row{
+    margin-top:14px;
+    padding-top:12px;
+    border-top:1.5px solid var(--ink);
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+  }
+  .total-row .lbl{font-size:12.5px; text-transform:none; color:rgba(15,43,37,0.65);}
+  .total-row .val{
+    font-family:'Fraunces',serif;
+    font-size:23px;
+    font-weight:500;
+  }
+  .per-person{font-size:11px; color:rgba(15,43,37,0.5); margin-top:2px; text-align:right;}
+
+  .chart-panel .bar-row{
+    display:grid;
+    grid-template-columns:130px 1fr 84px;
+    align-items:center;
+    gap:12px;
+    margin:12px 0;
+    font-size:13px;
+  }
+  .bar-track{
+    height:20px;
+    border-radius:5px;
+    overflow:hidden;
+    display:flex;
+    background:rgba(242,236,216,0.08);
+  }
+  .bar-seg{height:100%;}
+  .legend{
+    display:flex;
+    gap:18px;
+    flex-wrap:wrap;
+    margin-top:16px;
+    font-size:12px;
+    color:rgba(242,236,216,0.65);
+  }
+  .legend span{display:inline-flex; align-items:center; gap:6px;}
+  .swatch{width:10px; height:10px; border-radius:2px; display:inline-block;}
+
+  footer.note{
+    font-size:12px;
+    color:rgba(242,236,216,0.45);
+    max-width:820px;
+    line-height:1.6;
+    margin-top:8px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <p class="eyebrow">Family trip budgeting</p>
+    <h1>Which park makes the most sense this year?</h1>
+    <div class="hero-meta">
+      <span><b>2 adults</b> + <b>3 kids</b> (ages 14, 12, and one under 9)</span>
+      <span>Flying from <b>Tel Aviv</b></span>
+      <span><b>7-day</b> trip &middot; <b>3</b> park days &middot; <b>4</b> other nights</span>
+    </div>
+  </header>
+
+  <div class="panel">
+    <h2>Trip assumptions</h2>
+    <p class="sub">Every number below — and every number on the cards — is editable. Fill in real quotes as you collect them; everything recalculates instantly.</p>
+    <div class="assume-grid">
+      <div class="field">
+        <label for="foodPerPerson">Food, per person / day</label>
+        <div class="row"><input type="number" id="foodPerPerson" value="42" min="0" step="1"><span class="unit">$</span></div>
+      </div>
+      <div class="field">
+        <label for="miscPerDay">Extras (transit, souvenirs) / day</label>
+        <div class="row"><input type="number" id="miscPerDay" value="35" min="0" step="1"><span class="unit">$/family</span></div>
+      </div>
+      <div class="field">
+        <label for="nearNights">Nights near the park</label>
+        <input type="number" id="nearNights" value="3" min="0" max="10" step="1">
+      </div>
+      <div class="field">
+        <label for="otherNights">Nights, rest of the trip</label>
+        <input type="number" id="otherNights" value="4" min="0" max="10" step="1">
+      </div>
+      <div class="field">
+        <label>Show totals in</label>
+        <div class="toggle-row">
+          <button class="toggle-btn active" data-cur="USD">USD</button>
+          <button class="toggle-btn" data-cur="ILS">ILS</button>
+        </div>
+      </div>
+      <div class="field" id="fxField" style="display:none;">
+        <label for="fxRate">USD → ILS rate</label>
+        <input type="number" id="fxRate" value="3.7" min="1" step="0.01">
+      </div>
+    </div>
+  </div>
+
+  <div id="cards" class="cards"></div>
+
+  <div class="panel chart-panel">
+    <h2>Total cost, side by side</h2>
+    <p class="sub">Flights &middot; park admission &middot; hotels &middot; food and extras, stacked per park.</p>
+    <div id="chart"></div>
+    <div class="legend">
+      <span><i class="swatch" style="background:#D3A34C"></i>Flights</span>
+      <span><i class="swatch" style="background:#A3335F"></i>Park admission</span>
+      <span><i class="swatch" style="background:#5B8C7B"></i>Hotels</span>
+      <span><i class="swatch" style="background:#6E7B8A"></i>Food and extras</span>
+    </div>
+  </div>
+
+  <footer class="note">
+    Figures are editable starting points based on published 2026 rates, not live quotes — actual prices move with season and date. Park admission is calculated per traveler using each resort's own age rule for adult / junior / child pricing, so the same family can land in a different bracket at different parks. No trademarked names, characters, or fonts belonging to any park operator are used in this tool; park names appear only as plain text for identification.
+  </footer>
+
+</div>
+
+<script>
+const PARKS = [
+  {
+    id:'anaheim', name:'Anaheim, California', place:'USA — West Coast',
+    ageRule: a => a>=10 ? 'adult' : 'child',
+    tiers: ['adult','child'],
+    tierLabels: {adult:'Ages 10+', child:'Ages 3–9'},
+    flight: 1050,
+    ticket: {adult:425, child:400},
+    hotelNear: 280, hotelOther: 180
+  },
+  {
+    id:'orlando', name:'Orlando, Florida', place:'USA — East Coast',
+    ageRule: a => a>=10 ? 'adult' : 'child',
+    tiers: ['adult','child'],
+    tierLabels: {adult:'Ages 10+', child:'Ages 3–9'},
+    flight: 900,
+    ticket: {adult:405, child:385},
+    hotelNear: 250, hotelOther: 150
+  },
+  {
+    id:'paris', name:'Paris', place:'France',
+    ageRule: a => a>=12 ? 'adult' : 'child',
+    tiers: ['adult','child'],
+    tierLabels: {adult:'Ages 12+', child:'Ages 3–11'},
+    flight: 340,
+    ticket: {adult:308, child:285},
+    hotelNear: 220, hotelOther: 160
+  },
+  {
+    id:'tokyo', name:'Tokyo', place:'Japan',
+    ageRule: a => a>=18 ? 'adult' : (a>=12 ? 'junior' : 'child'),
+    tiers: ['adult','junior','child'],
+    tierLabels: {adult:'Ages 18+', junior:'Ages 12–17', child:'Ages 4–11'},
+    flight: 900,
+    ticket: {adult:184, junior:145, child:104},
+    hotelNear: 260, hotelOther: 170
+  },
+  {
+    id:'hongkong', name:'Hong Kong', place:'China — SAR',
+    ageRule: a => a>=12 ? 'adult' : 'child',
+    tiers: ['adult','child'],
+    tierLabels: {adult:'Ages 12–59', child:'Ages 3–11'},
+    flight: 750,
+    ticket: {adult:230, child:170},
+    hotelNear: 200, hotelOther: 140
+  }
+];
+
+const cardsEl = document.getElementById('cards');
+const chartEl = document.getElementById('chart');
+let currency = 'USD';
+
+function familyAges(){
+  // The youngest child (under 10) is always the "child" fare at every park in
+  // this list, since the lowest adult/junior cutoff anywhere is age 10 — so a
+  // fixed placeholder age works exactly as well as an editable one here.
+  return [30,30,14,12,7];
+}
+
+function buildCard(park){
+  const div = document.createElement('div');
+  div.className = 'card';
+  div.dataset.id = park.id;
+
+  const tierRows = park.tiers.map(t => `
+    <div class="subrow" data-tier="${t}">
+      <span class="tag" id="${park.id}-${t}-tag"></span>
+      <input type="number" id="${park.id}-ticket-${t}" value="${park.ticket[t]}" min="0" step="1">
+    </div>
+  `).join('');
+
+  div.innerHTML = `
+    <div class="rank" data-rank>#1</div>
+    <p class="card-title">${park.name}</p>
+    <p class="card-sub">${park.place}</p>
+
+    <div class="line-item">
+      <span class="lbl">Flights, round trip × 5</span>
+      <span class="val"><input type="number" id="${park.id}-flight" value="${park.flight}" min="0" step="10" style="width:64px;background:transparent;border:1px solid rgba(15,43,37,0.24);border-radius:6px;padding:3px 5px;font-family:Inter,sans-serif;font-size:12px;color:var(--ink);"> $/seat</span>
+    </div>
+    <div class="line-item"><span class="lbl">→ Flights subtotal</span><span class="val" id="${park.id}-flightSub">–</span></div>
+
+    <div class="tier-block">
+      <div class="tier-title">Park admission, 3 days — per person by age</div>
+      ${tierRows}
+    </div>
+    <div class="line-item"><span class="lbl">→ Admission subtotal</span><span class="val" id="${park.id}-ticketSub">–</span></div>
+
+    <div class="subrow">
+      <span class="tag">Hotel near park, $/night</span>
+      <input type="number" id="${park.id}-hotelNear" value="${park.hotelNear}" min="0" step="5">
+    </div>
+    <div class="subrow">
+      <span class="tag">Hotel, rest of trip $/night</span>
+      <input type="number" id="${park.id}-hotelOther" value="${park.hotelOther}" min="0" step="5">
+    </div>
+    <div class="line-item"><span class="lbl">→ Hotels subtotal</span><span class="val" id="${park.id}-hotelSub">–</span></div>
+
+    <div class="line-item"><span class="lbl">Food and extras (shared)</span><span class="val" id="${park.id}-foodSub">–</span></div>
+
+    <div class="total-row">
+      <span class="lbl">Trip total</span>
+      <span class="val" id="${park.id}-total">–</span>
+    </div>
+    <div class="per-person" id="${park.id}-perPerson"></div>
+  `;
+  cardsEl.appendChild(div);
+}
+
+PARKS.forEach(buildCard);
+
+function fmt(n){
+  const rate = currency === 'ILS' ? (parseFloat(document.getElementById('fxRate').value)||3.7) : 1;
+  const symbol = currency === 'ILS' ? '₪' : '$';
+  const val = Math.round(n * rate);
+  return symbol + val.toLocaleString();
+}
+
+function recalc(){
+  const ages = familyAges();
+  const foodPerPerson = parseFloat(document.getElementById('foodPerPerson').value) || 0;
+  const miscPerDay = parseFloat(document.getElementById('miscPerDay').value) || 0;
+  const nearNights = parseFloat(document.getElementById('nearNights').value) || 0;
+  const otherNights = parseFloat(document.getElementById('otherNights').value) || 0;
+  const totalDays = nearNights + otherNights;
+
+  const results = PARKS.map(park => {
+    const flight = parseFloat(document.getElementById(`${park.id}-flight`).value) || 0;
+    const flightSub = flight * 5;
+
+    const counts = {};
+    park.tiers.forEach(t => counts[t] = 0);
+    ages.forEach(a => { counts[park.ageRule(a)]++; });
+
+    let ticketSub = 0;
+    park.tiers.forEach(t => {
+      const price = parseFloat(document.getElementById(`${park.id}-ticket-${t}`).value) || 0;
+      const tagEl = document.getElementById(`${park.id}-${t}-tag`);
+      if(tagEl) tagEl.textContent = `${park.tierLabels[t]} × ${counts[t]}`;
+      ticketSub += price * counts[t];
+    });
+
+    const hotelNear = parseFloat(document.getElementById(`${park.id}-hotelNear`).value) || 0;
+    const hotelOther = parseFloat(document.getElementById(`${park.id}-hotelOther`).value) || 0;
+    const hotelSub = hotelNear*nearNights + hotelOther*otherNights;
+
+    const foodSub = foodPerPerson * 5 * totalDays + miscPerDay * totalDays;
+
+    const total = flightSub + ticketSub + hotelSub + foodSub;
+
+    document.getElementById(`${park.id}-flightSub`).textContent = fmt(flightSub);
+    document.getElementById(`${park.id}-ticketSub`).textContent = fmt(ticketSub);
+    document.getElementById(`${park.id}-hotelSub`).textContent = fmt(hotelSub);
+    document.getElementById(`${park.id}-foodSub`).textContent = fmt(foodSub);
+    document.getElementById(`${park.id}-total`).textContent = fmt(total);
+    document.getElementById(`${park.id}-perPerson`).textContent = `${fmt(total/5)} per person`;
+
+    return {park, flightSub, ticketSub, hotelSub, foodSub, total};
+  });
+
+  const sorted = [...results].sort((a,b) => a.total - b.total);
+  sorted.forEach((r, i) => {
+    const card = cardsEl.querySelector(`[data-id="${r.park.id}"]`);
+    card.classList.toggle('best', i===0);
+    card.querySelector('[data-rank]').textContent = '#' + (i+1);
+  });
+
+  renderChart(sorted);
+}
+
+function renderChart(sorted){
+  const maxTotal = Math.max(...sorted.map(r=>r.total), 1);
+  chartEl.innerHTML = sorted.map(r => {
+    const w = n => (n/maxTotal*100).toFixed(2)+'%';
+    return `
+      <div class="bar-row">
+        <span>${r.park.name}</span>
+        <div class="bar-track">
+          <div class="bar-seg" style="width:${w(r.flightSub)};background:#D3A34C"></div>
+          <div class="bar-seg" style="width:${w(r.ticketSub)};background:#A3335F"></div>
+          <div class="bar-seg" style="width:${w(r.hotelSub)};background:#5B8C7B"></div>
+          <div class="bar-seg" style="width:${w(r.foodSub)};background:#6E7B8A"></div>
+        </div>
+        <span style="text-align:right;font-variant-numeric:tabular-nums;">${fmt(r.total)}</span>
+      </div>
+    `;
+  }).join('');
+}
+
+document.querySelectorAll('.toggle-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.toggle-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    currency = btn.dataset.cur;
+    document.getElementById('fxField').style.display = currency==='ILS' ? 'block' : 'none';
+    recalc();
+  });
+});
+
+document.addEventListener('input', (e) => {
+  if(e.target.tagName === 'INPUT'){ recalc(); }
+});
+
+recalc();
+</script>
+</body>
+</html>
